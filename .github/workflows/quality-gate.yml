@@ -1,0 +1,44 @@
+name: Grounded Quality Gate
+
+# Runs the golden-set quality gate on every push / PR. If retrieval recall or
+# refusal accuracy regress below threshold, the build FAILS.
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    env:
+      # Portable cache location on the Linux runner (no D: drive here).
+      GROUNDED_CACHE_ROOT: ${{ github.workspace }}/.grounded_cache
+      TOKENIZERS_PARALLELISM: "false"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies (CPU-only)
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install sentence-transformers transformers pymupdf \
+                      langchain-text-splitters rank-bm25 pyyaml numpy pytest
+
+      - name: Cache HuggingFace models
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.grounded_cache/huggingface
+          key: hf-models-${{ runner.os }}-v1
+
+      - name: Run quality gate (retrieval recall + refusal accuracy)
+        run: pytest tests/test_quality_gate.py -v

@@ -1,0 +1,192 @@
+{
+  "retrieval_recall_at_5": 1.0,
+  "retrieval_n": 24,
+  "retrieval_misses": [],
+  "refusal_accuracy": 1.0,
+  "refusal_details": [
+    {
+      "id": "kyc_01",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 0.32,
+      "ok": true
+    },
+    {
+      "id": "kyc_02",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 3.91,
+      "ok": true
+    },
+    {
+      "id": "kyc_03",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 3.4,
+      "ok": true
+    },
+    {
+      "id": "kyc_04",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 4.3,
+      "ok": true
+    },
+    {
+      "id": "dl_01",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 5.64,
+      "ok": true
+    },
+    {
+      "id": "dl_02",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 1.78,
+      "ok": true
+    },
+    {
+      "id": "dl_03",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 3.48,
+      "ok": true
+    },
+    {
+      "id": "nbfc_01",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 5.37,
+      "ok": true
+    },
+    {
+      "id": "nbfc_02",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 6.24,
+      "ok": true
+    },
+    {
+      "id": "nbfc_03",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 4.6,
+      "ok": true
+    },
+    {
+      "id": "card_01",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 7.54,
+      "ok": true
+    },
+    {
+      "id": "card_02",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 3.08,
+      "ok": true
+    },
+    {
+      "id": "mfi_01",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 4.17,
+      "ok": true
+    },
+    {
+      "id": "mfi_02",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 4.79,
+      "ok": true
+    },
+    {
+      "id": "adv_01",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 4.01,
+      "ok": true
+    },
+    {
+      "id": "adv_02",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 6.15,
+      "ok": true
+    },
+    {
+      "id": "psl_01",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 7.0,
+      "ok": true
+    },
+    {
+      "id": "psl_02",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 7.12,
+      "ok": true
+    },
+    {
+      "id": "fraud_01",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 4.2,
+      "ok": true
+    },
+    {
+      "id": "fraud_02",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 6.73,
+      "ok": true
+    },
+    {
+      "id": "cs_01",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 6.13,
+      "ok": true
+    },
+    {
+      "id": "cs_02",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 3.57,
+      "ok": true
+    },
+    {
+      "id": "out_01",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 5.39,
+      "ok": true
+    },
+    {
+      "id": "out_02",
+      "expected": "answer",
+      "got": "answer",
+      "top_score": 1.97,
+      "ok": true
+    },
+    {
+      "id": "oos_01",
+      "expected": "decline",
+      "got": "decline",
+      "top_score": -8.7,
+      "ok": true
+    },
+    {
+      "id": "oos_02",
+      "expected": "decline",
+      "got": "decline",
+      "top_score": -9.59,
+      "ok": true
+    }
+  ],
+  "faithfulness_grounded": 0.967,
+  "faithfulness_hallucinated": 0.008
+}

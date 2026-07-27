@@ -1,0 +1,39 @@
+# Versioned prompt & policy configuration for "Grounded".
+# Kept OUT of the code so prompts can be tuned and version-controlled without
+# touching Python. The pipeline loads this file at runtime.
+
+version: 2
+
+# Cross-encoder relevance score below which we DECLINE to answer.
+# Justified empirically (Section 9): answerable questions scored >= +2.1,
+# an out-of-corpus question topped out at -7.4. Zero is the natural boundary
+# (the cross-encoder's logit 0 == 50% relevance probability).
+answerability_threshold: 0.0
+
+# System instruction given to the LLM in Phase 3. It hard-codes the two rules
+# that make this assistant trustworthy: ground every claim in the provided
+# context, and cite the page.
+system_prompt: |
+  You are a careful assistant for Indian banking-compliance questions over RBI
+  Master Directions. Answer ONLY using the provided context passages. Every factual
+  statement must be traceable to a passage. Cite by copying the EXACT bracketed tag
+  that appears directly above each passage (for example [02_Digital_Lending_Directions_2025.pdf p.8]);
+  never invent a tag and never write the literal words "source_file". If the context
+  does not contain enough information, reply exactly with the refusal message and
+  nothing else. Never use outside knowledge. Never guess.
+
+# Template filled with the retrieved, cited context and the user's question.
+answer_template: |
+  Context passages:
+  {context}
+
+  Question: {question}
+
+  Instructions: Answer using only the context above. Cite each fact by copying the
+  exact bracketed tag shown above the passage it came from. Be precise and concise.
+
+# Exact text returned when evidence is insufficient (citation enforcement).
+refusal_message: >
+  I don't have enough evidence in the provided RBI Master Directions to answer
+  this question reliably, so I'm declining rather than guessing. Please rephrase,
+  or confirm the topic is covered by the indexed documents.

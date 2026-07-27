@@ -1,0 +1,32 @@
+{
+  "description": "Hand-authored golden evaluation set for Grounded. Each question is written against the real RBI corpus and mapped to the document that should contain the answer. 'answerable': false items are out-of-scope and MUST be declined (refusal test). Used for retrieval-recall, refusal-accuracy, and NLI faithfulness evaluation.",
+  "version": 1,
+  "questions": [
+    {"id": "kyc_01", "question": "What is the beneficial owner threshold for identifying the owner of a company under KYC norms?", "expected_source_file": "01_KYC_Master_Direction_2016.pdf", "answerable": true, "topic": "KYC"},
+    {"id": "kyc_02", "question": "For a trust, who must be identified as the beneficial owners under KYC rules?", "expected_source_file": "01_KYC_Master_Direction_2016.pdf", "answerable": true, "topic": "KYC"},
+    {"id": "kyc_03", "question": "Which documents are treated as Officially Valid Documents (OVDs) for KYC?", "expected_source_file": "01_KYC_Master_Direction_2016.pdf", "answerable": true, "topic": "KYC"},
+    {"id": "kyc_04", "question": "In which situations must a Regulated Entity carry out Customer Due Diligence?", "expected_source_file": "01_KYC_Master_Direction_2016.pdf", "answerable": true, "topic": "KYC"},
+    {"id": "dl_01", "question": "What must a digital lending app disclose to borrowers through the Key Fact Statement?", "expected_source_file": "02_Digital_Lending_Directions_2025.pdf", "answerable": true, "topic": "Digital Lending"},
+    {"id": "dl_02", "question": "How should loan disbursal and repayment flow between the borrower and the Regulated Entity in digital lending?", "expected_source_file": "02_Digital_Lending_Directions_2025.pdf", "answerable": true, "topic": "Digital Lending"},
+    {"id": "dl_03", "question": "What cooling-off or look-up period must digital lenders provide to borrowers?", "expected_source_file": "02_Digital_Lending_Directions_2025.pdf", "answerable": true, "topic": "Digital Lending"},
+    {"id": "nbfc_01", "question": "How are NBFCs categorised under the Scale Based Regulation framework?", "expected_source_file": "03_NBFC_Scale_Based_Regulation_2023.pdf", "answerable": true, "topic": "NBFC"},
+    {"id": "nbfc_02", "question": "What criteria place an NBFC in the Upper Layer under scale based regulation?", "expected_source_file": "03_NBFC_Scale_Based_Regulation_2023.pdf", "answerable": true, "topic": "NBFC"},
+    {"id": "nbfc_03", "question": "What is the net owned fund requirement for NBFCs?", "expected_source_file": "03_NBFC_Scale_Based_Regulation_2023.pdf", "answerable": true, "topic": "NBFC"},
+    {"id": "card_01", "question": "Can a card issuer send an unsolicited credit card to a customer?", "expected_source_file": "04_Credit_Debit_Card_Directions_2022.pdf", "answerable": true, "topic": "Cards"},
+    {"id": "card_02", "question": "What consent is required before increasing a customer's credit card limit?", "expected_source_file": "04_Credit_Debit_Card_Directions_2022.pdf", "answerable": true, "topic": "Cards"},
+    {"id": "mfi_01", "question": "How is a microfinance loan defined with respect to household income?", "expected_source_file": "05_Microfinance_Loans_Framework_2022.pdf", "answerable": true, "topic": "Microfinance"},
+    {"id": "mfi_02", "question": "What is the cap on loan repayment obligations as a share of a household's monthly income for microfinance loans?", "expected_source_file": "05_Microfinance_Loans_Framework_2022.pdf", "answerable": true, "topic": "Microfinance"},
+    {"id": "adv_01", "question": "Which external benchmarks may banks use to price floating rate retail loans?", "expected_source_file": "06_Interest_Rate_on_Advances_2016.pdf", "answerable": true, "topic": "Interest Rate on Advances"},
+    {"id": "adv_02", "question": "Are foreclosure charges allowed on floating rate term loans to individual borrowers?", "expected_source_file": "06_Interest_Rate_on_Advances_2016.pdf", "answerable": true, "topic": "Interest Rate on Advances"},
+    {"id": "psl_01", "question": "What is the overall priority sector lending target for domestic banks as a percentage of ANBC?", "expected_source_file": "07_Priority_Sector_Lending_Directions.pdf", "answerable": true, "topic": "Priority Sector Lending"},
+    {"id": "psl_02", "question": "Which broad categories are eligible for classification under priority sector lending?", "expected_source_file": "07_Priority_Sector_Lending_Directions.pdf", "answerable": true, "topic": "Priority Sector Lending"},
+    {"id": "fraud_01", "question": "Must banks issue a show cause notice before classifying an account as fraud?", "expected_source_file": "08_Fraud_Risk_Management_Directions_2024.pdf", "answerable": true, "topic": "Fraud Risk"},
+    {"id": "fraud_02", "question": "What governance structure must banks establish for fraud risk management?", "expected_source_file": "08_Fraud_Risk_Management_Directions_2024.pdf", "answerable": true, "topic": "Fraud Risk"},
+    {"id": "cs_01", "question": "What is the prescribed timeframe for collection of outstation cheques?", "expected_source_file": "09_Customer_Service_Master_Circular.pdf", "answerable": true, "topic": "Customer Service"},
+    {"id": "cs_02", "question": "What compensation applies for delayed credit of outstation cheque proceeds?", "expected_source_file": "09_Customer_Service_Master_Circular.pdf", "answerable": true, "topic": "Customer Service"},
+    {"id": "out_01", "question": "Can a bank outsource its core management functions to a service provider?", "expected_source_file": "10_Outsourcing_Financial_Services_Directions.pdf", "answerable": true, "topic": "Outsourcing"},
+    {"id": "out_02", "question": "What due diligence must a bank perform before outsourcing a financial service?", "expected_source_file": "10_Outsourcing_Financial_Services_Directions.pdf", "answerable": true, "topic": "Outsourcing"},
+    {"id": "oos_01", "question": "How do I prepare a recipe for chocolate cake?", "expected_source_file": null, "answerable": false, "topic": "Out-of-scope"},
+    {"id": "oos_02", "question": "What is the capital city of France?", "expected_source_file": null, "answerable": false, "topic": "Out-of-scope"}
+  ]
+}
