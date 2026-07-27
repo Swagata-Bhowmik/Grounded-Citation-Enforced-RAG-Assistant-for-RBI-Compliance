@@ -199,4 +199,8 @@ TEMPLATE = """<!DOCTYPE html>
 if __name__ == "__main__":
     html = build()
     OUT.write_text(html, encoding="utf-8")
-    print("Wrote", OUT, "(", round(len(html) / 1024, 1), "KB )")
+    # Also publish a copy for GitHub Pages (served at docs/index.html).
+    pages = REPO / "docs" / "index.html"
+    pages.parent.mkdir(parents=True, exist_ok=True)
+    pages.write_text(html, encoding="utf-8")
+    print("Wrote", OUT, "and", pages, "(", round(len(html) / 1024, 1), "KB )")
