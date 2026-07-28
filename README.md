@@ -1,6 +1,11 @@
 # 🤖 Grounded — Citation-Enforced RAG Assistant for RBI Compliance
 
-A production-grade, **fully-offline agentic RAG** system for banking-compliance Q&A over real
+### 🌍 [**Try the live demo →**](https://grounded-citation-enforced-rag-assistant-swagata-bhowmik.streamlit.app/)
+
+Ask a real RBI-compliance question and watch it retrieve, cite the exact page, or honestly
+decline. (Free tier: sleeps when idle — the first load may take ~30s to wake.)
+
+A production-grade **agentic RAG** system for banking-compliance Q&A over real
 **RBI Master Directions** — with hybrid retrieval, cross-encoder re-ranking, **page-level
 citation enforcement**, and a **LangGraph agent that declines on insufficient evidence instead
 of hallucinating**. Runs end-to-end on free, local tools at **zero API cost**.
@@ -85,9 +90,11 @@ Streamlit · GitHub Actions · **all free / offline**.
 
 ## 🌍 Live demo (free)
 
-Deployable as a free public app on **Streamlit Community Cloud**, using the **Gemini
-free-tier API** for generation (a swappable provider — the local Qwen LLM still runs
-offline on a full machine). Step-by-step instructions in **[`DEPLOY.md`](DEPLOY.md)**.
+**Live:** https://grounded-citation-enforced-rag-assistant-swagata-bhowmik.streamlit.app/
+
+Runs free on **Streamlit Community Cloud** using the **Gemini free-tier API** for generation
+(a swappable provider — the local Qwen LLM still runs fully offline on a full machine).
+Redeploy instructions in **[`DEPLOY.md`](DEPLOY.md)**.
 
 ## 🗺️ Roadmap
 
