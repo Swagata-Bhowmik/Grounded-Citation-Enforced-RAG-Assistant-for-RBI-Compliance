@@ -14,15 +14,13 @@ hallucinating**.
 
 ## 🎬 Explore the project
 
-Everything is public and clickable. Start with the live demo.
+Three ways to see it in action — start with the live demo.
 
 | | Deliverable | Description |
 |---|---|---|
-| 🌍 | **[Live Demo](https://grounded-citation-enforced-rag-assistant-swagata-bhowmik.streamlit.app/)** | Ask a real compliance question and get a page-cited answer — or an honest refusal. *(Free host; first load ~30s to wake.)* |
-| 📊 | **[Interactive Walkthrough](https://swagata-bhowmik.github.io/Grounded-Citation-Enforced-RAG-Assistant-for-RBI-Compliance/)** | A 15-chapter visual story of how it works — no install, runs in the browser. |
-| 📓 | **[Guided Notebook](https://nbviewer.org/github/Swagata-Bhowmik/Grounded-Citation-Enforced-RAG-Assistant-for-RBI-Compliance/blob/main/notebooks/Grounded_RAG_Compliance_Assistant.ipynb)** | The full build, cell by cell, with every result interpreted. |
-| 📘 | **[Complete Project Guide (Word)](docs/Grounded_Project_Bible.docx?raw=1)** | Concepts from zero, the full story, the code, deployment, and a 140+ question Q&A bank. |
-| 💻 | **[Source Code](https://github.com/Swagata-Bhowmik/Grounded-Citation-Enforced-RAG-Assistant-for-RBI-Compliance)** | The full, reproducible pipeline (this repository). |
+| 🌍 | **[Live Demo (online dashboard)](https://grounded-citation-enforced-rag-assistant-swagata-bhowmik.streamlit.app/)** | Ask a real compliance question and get a page-cited answer — or an honest refusal. *(Free host; first load ~30s to wake.)* |
+| 📊 | **[Interactive Walkthrough (offline dashboard)](https://swagata-bhowmik.github.io/Grounded-Citation-Enforced-RAG-Assistant-for-RBI-Compliance/)** | A 15-chapter visual story of how it works — no install, runs in the browser. |
+| 📓 | **[Guided Notebook](https://nbviewer.org/github/Swagata-Bhowmik/Grounded-Citation-Enforced-RAG-Assistant-for-RBI-Compliance/blob/main/notebooks/Grounded_RAG_Compliance_Assistant.ipynb)** | The full build story, cell by cell, with every result interpreted. |
 
 ---
 
@@ -69,32 +67,6 @@ PDFs → chunk (384-tok, page-tagged) → embeddings → index
 
 Python · PyMuPDF · sentence-transformers (bge-small + cross-encoder) · rank-bm25 · LangGraph ·
 llama.cpp (Qwen2.5-3B) / Google Gemini · NLI faithfulness · Streamlit · GitHub Actions — **all free.**
-
-## 🚀 Run locally
-
-```bash
-pip install -r requirements.txt          # lean set (full pin: requirements-lock.txt)
-
-streamlit run dashboard/streamlit_app.py # interactive app
-python scripts/quality_gate.py           # run the golden-set quality gate
-```
-
-To use Gemini locally, copy `.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` and add a
-free key from [Google AI Studio](https://aistudio.google.com/app/apikey). Full deploy steps: **[DEPLOY.md](DEPLOY.md)**.
-
-## 📁 Repository structure
-
-```
-regulatory_corpus/   real RBI PDFs + manifest
-src/                 pipeline: chunker, embedder, retriever, citation guard, agent, evaluation, llm_provider
-prompts/             versioned prompts & policy (prompts.yaml)
-evaluation/          golden question set + results
-scripts/ tests/      CI quality gate + pytest
-dashboard/           Streamlit app + HTML dashboard generator
-docs/                published HTML walkthrough + the project guide
-notebooks/           the guided build story
-.github/workflows/   CI quality-gate workflow
-```
 
 ## ⚠️ Limitations
 
