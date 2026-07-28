@@ -134,7 +134,36 @@ body { margin:0; font-family:'Segoe UI',system-ui,sans-serif; color:#1a1a2e;
 .qa.decline { border-left-color:#C62828; }
 .badge { padding:3px 10px; border-radius:12px; color:#fff; font-size:12px; font-weight:700; }
 .callout { background:#EDE7F6; border-radius:12px; padding:14px 18px; margin:12px 0; color:#4A148C; }
+.story { background:linear-gradient(90deg,#12143a 0%,#3b1361 100%); color:#fff; border-radius:12px;
+         padding:12px 18px; margin:2px 0 16px; box-shadow:0 3px 10px rgba(59,19,97,.28); }
+.story .step { display:inline-block; background:#f0a; color:#12143a; font-weight:800; font-size:11px;
+               padding:2px 10px; border-radius:20px; margin-right:10px; letter-spacing:.5px; }
+.story .txt { font-size:14px; color:#f3ecff; }
+.nextline { text-align:right; margin:18px 2px 0; }
+.nextline a { color:#6A1B9A; font-weight:700; text-decoration:none; font-size:13.5px; cursor:pointer; }
+.nextline a:hover { text-decoration:underline; }
 """
+
+
+# The connective narrative that turns separate tabs into ONE story. Each entry:
+# (chapter label, the sentence bridging the previous step to this one, next-tab id, next-tab label)
+STORY = {
+    "problem":    ("CHAPTER 1 · WHY", "Every project starts with a real problem. Here is the one Grounded solves — and why a wrong answer is expensive.", "corpus", "Next: the documents we gave it →"),
+    "corpus":     ("CHAPTER 2 · THE DATA", "We have a problem. Step one of any RAG system: gather real, trustworthy documents — and check them before trusting them.", "chunking", "Next: cutting them into pieces →"),
+    "chunking":   ("CHAPTER 3 · PREP", "The documents are huge. Before a computer can search them, we cut them into small, page-tagged pieces.", "embeddings", "Next: turning pieces into meaning →"),
+    "embeddings": ("CHAPTER 4 · MEANING", "Now we have 1,252 small pieces. Next we give each one a numeric 'meaning fingerprint' so we can search by meaning, not just words.", "vector", "Next: where we store them →"),
+    "vector":     ("CHAPTER 5 · STORAGE", "Every piece has a fingerprint. We need a store that, given a question, returns the closest pieces instantly.", "hybrid", "Next: searching two ways at once →"),
+    "hybrid":     ("CHAPTER 6 · SEARCH", "Meaning-search alone misses exact clause numbers. So we add a second search — by keyword — and merge the two.", "rerank", "Next: a sharper second reader →"),
+    "rerank":     ("CHAPTER 7 · PRECISION", "Fast search gives a rough shortlist. Now a slower, sharper model re-checks the top candidates with the question in hand.", "enforce", "Next: the decision to answer or refuse →"),
+    "enforce":    ("CHAPTER 8 · TRUST", "We have the best evidence and a confidence score. Here is the rule that decides: answer with citations, or honestly refuse.", "agent", "Next: the conductor that runs it all →"),
+    "agent":      ("CHAPTER 9 · THE BRAIN", "Retrieval, the refusal rule, and the writer need a conductor. Enter the agent that decides, acts, and double-checks.", "eval", "Next: proving it actually works →"),
+    "eval":       ("CHAPTER 10 · PROOF", "The machine works. But does it work WELL? Time to grade it against a hand-made answer key.", "faith", "Next: did it invent anything? →"),
+    "faith":      ("CHAPTER 11 · FACT-CHECK", "Recall and refusal look great. One more check: did the written answer add any claim the evidence didn't support?", "ci", "Next: keeping quality forever →"),
+    "ci":         ("CHAPTER 12 · GUARDRAIL", "Quality is proven today. This robot guard makes sure it STAYS proven on every future code change.", "insights", "Next: what we learned →"),
+    "insights":   ("CHAPTER 13 · SO WHAT", "The system is built and measured. So what did we actually learn — and why would a business care?", "generalize", "Next: where else this works →"),
+    "generalize": ("CHAPTER 14 · BEYOND", "It works for RBI. The very same recipe works far beyond banking.", "limits", "Next: the honest edges →"),
+    "limits":     ("CHAPTER 15 · HONESTY", "No honest project is perfect. Here is exactly what this is — and what it is not.", "stack", "Next: the tools used →"),
+}
 
 
 def layer(cls, title, inner):
@@ -151,15 +180,25 @@ def chart(cid, title):
 
 def concept(cid, title, summary, plain, tech, did, example, biz=None, charts=None):
     html = f'<div class="section" id="{cid}"><h2 class="title">{title}</h2>'
+    # storyline strip — bridges the previous chapter to this one
+    if cid in STORY:
+        step, bridge, _, _ = STORY[cid]
+        html += f'<div class="story"><span class="step">{step}</span><span class="txt">{bridge}</span></div>'
     html += f'<p class="summary">{summary}</p>'
-    html += layer("plain", "🧒 In plain words (like explaining to a kid)", plain)
-    html += layer("tech", "⚙️ In technical terms", tech)
-    html += layer("did", "🔧 What we did in Grounded", ul(did))
-    html += layer("example", "📌 A real example from our project", example)
+    # Four DISTINCT layers, each adding something new (no restating the same point):
+    #   plain = the intuition · tech = the precise definition · did = our concrete build · example = real data
+    html += layer("plain", "🧒 The intuition (plain words)", plain)
+    html += layer("tech", "⚙️ The precise definition", tech)
+    html += layer("did", "🔧 What WE actually built (specifics & numbers)", ul(did))
+    html += layer("example", "📌 A real example from our own data", example)
     if biz:
-        html += layer("biz", "💼 Why it matters (business angle)", ul(biz))
+        html += layer("biz", "💼 Why a business cares", ul(biz))
     for c in (charts or []):
         html += c
+    # forward link — keeps the reader moving through the story
+    if cid in STORY:
+        _, _, nxt, nlabel = STORY[cid]
+        html += f'<div class="nextline"><a data-t="{nxt}">{nlabel}</a></div>'
     html += "</div>"
     return html
 
@@ -493,7 +532,7 @@ function show(id){
   document.querySelectorAll('.navlink').forEach(n => n.classList.toggle('active', n.dataset.t === id));
   window.scrollTo(0, 0);
 }
-document.querySelectorAll('.navlink').forEach(n => n.addEventListener('click', () => show(n.dataset.t)));
+document.querySelectorAll('[data-t]').forEach(n => n.addEventListener('click', () => show(n.dataset.t)));
 const f3 = v => (Math.round(v*1000)/1000).toFixed(3);
 const f2 = v => (Math.round(v*100)/100).toFixed(2);
 const sgn = v => (v > 0 ? '+' : '') + f2(v);
