@@ -22,8 +22,12 @@ env/
 chroma_store/
 *.sqlite3
 models_cache/
+.grounded_cache/
 *.bin
 *.pt
+
+# --- Streamlit local secrets (API keys live here locally; NEVER commit) ---
+.streamlit/secrets.toml
 
 # --- OS noise ---
 Thumbs.db

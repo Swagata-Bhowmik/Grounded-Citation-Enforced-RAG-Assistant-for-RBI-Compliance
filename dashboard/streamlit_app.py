@@ -4,6 +4,11 @@ Grounded — Streamlit dashboard & live demo
 A colorful, story-driven front end for the RBI-compliance RAG assistant:
 problem → corpus → method → results → live "ask a question" with visible citations.
 
+Runs in three environments with the SAME code:
+  * Locally on Windows  -> caches on D:, optional local Qwen LLM.
+  * Streamlit Community Cloud (Linux, free) -> caches in-repo, Gemini API LLM.
+  * Any machine with a GEMINI_API_KEY set -> Gemini-backed answers.
+
 Run locally:
     conda activate D:\grounded-rag-env
     streamlit run dashboard/streamlit_app.py
@@ -12,18 +17,37 @@ Run locally:
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 
-# --- make config/ and src/ importable, and point caches at D: --------------
+# --- make config/ and src/ importable --------------------------------------
 REPO = Path(__file__).resolve().parents[1]
 sys.path.append(str(REPO / "config"))
 sys.path.append(str(REPO / "src"))
+
+# Cache location: keep D: on this Windows machine (C: is full), but on any host
+# without a D: drive (e.g. the Linux cloud runner) fall back to an in-repo cache
+# so model downloads have a writable home instead of a literal "D:\..." folder.
+if "GROUNDED_CACHE_ROOT" not in os.environ and not Path("D:/").exists():
+    os.environ["GROUNDED_CACHE_ROOT"] = str(REPO / ".grounded_cache")
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+
+# Pull the Gemini key from Streamlit secrets into the environment (if present),
+# so the provider layer can pick it up. Never hard-coded, never committed.
+try:
+    if "GEMINI_API_KEY" in st.secrets:
+        os.environ.setdefault("GEMINI_API_KEY", str(st.secrets["GEMINI_API_KEY"]))
+except Exception:
+    pass  # no secrets.toml locally — fine
+
 import project_paths
 project_paths.apply_env()
+
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
 
 st.set_page_config(page_title="Grounded — RBI Compliance RAG",
                    page_icon="🤖", layout="wide")
@@ -69,11 +93,34 @@ def load_light():
 
 
 # --------------------------------------------------------------------------- #
+#  Embeddings — prefer the repo-committed file (instant), else cache, else build
+# --------------------------------------------------------------------------- #
+def _load_or_build_embeddings(chunks):
+    import numpy as np
+    # 1) committed with the repo (fast path, used on the cloud)
+    if project_paths.REPO_EMBEDDINGS.exists():
+        emb = np.load(project_paths.REPO_EMBEDDINGS)
+        if emb.shape[0] == len(chunks):
+            return emb
+    # 2) local D: cache from a previous run
+    cache_path = project_paths.CACHE_ROOT / "embeddings" / "corpus_embeddings.npy"
+    if cache_path.exists():
+        emb = np.load(cache_path)
+        if emb.shape[0] == len(chunks):
+            return emb
+    # 3) build once and cache (cold start with no precomputed file)
+    from embedder import load_embedder, embed_passages
+    emb = embed_passages(load_embedder(), [c["text"] for c in chunks], show_progress=False)
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    np.save(cache_path, emb)
+    return emb
+
+
+# --------------------------------------------------------------------------- #
 #  Heavy pipeline — loaded once, only when needed (live demo)
 # --------------------------------------------------------------------------- #
 @st.cache_resource(show_spinner="Loading the retrieval + agent pipeline (first time only)…")
-def load_pipeline(with_llm: bool):
-    import numpy as np
+def load_pipeline(llm_mode: str):
     from document_chunker import get_tokenizer, chunk_corpus
     from embedder import load_embedder
     from hybrid_retriever import HybridRetriever
@@ -81,17 +128,16 @@ def load_pipeline(with_llm: bool):
 
     tok = get_tokenizer()
     chunks = chunk_corpus(str(project_paths.CORPUS_DIR), 384, 64, tokenizer=tok)
-    emb_path = project_paths.CACHE_ROOT / "embeddings" / "corpus_embeddings.npy"
-    embeddings = np.load(emb_path)
+    embeddings = _load_or_build_embeddings(chunks)
     embedder = load_embedder()
     retriever = HybridRetriever(chunks, embeddings, embedder)
     cfg = load_prompt_config(str(project_paths.PROMPTS_DIR))
 
     agent = None
-    if with_llm:
+    if llm_mode in ("gemini", "local"):
         from llm_provider import get_llm
         from agent import build_agent
-        agent = build_agent(retriever, get_llm(), cfg)
+        agent = build_agent(retriever, get_llm(provider=llm_mode), cfg)
     return retriever, cfg, agent
 
 
@@ -171,7 +217,9 @@ with tab_method:
 <b>4. Re-rank</b> — a cross-encoder re-scores the top candidates for precision.<br>
 <b>5. Enforce citations</b> — if the best evidence is too weak, <b>decline</b> instead of guessing.<br>
 <b>6. Agent (LangGraph)</b> — retrieve → assess → (answer | decline) → verify → cite.<br>
-<b>7. Generate</b> — a local LLM (Qwen2.5-3B, offline) writes the answer, grounded in the cited context.
+<b>7. Generate</b> — a provider-swappable LLM writes the answer, grounded ONLY in the cited
+context: a local Qwen2.5-3B (offline, zero-cost) on a full machine, or the Gemini free-tier
+API for the low-RAM public cloud demo. Same interface, same citation rules either way.
 </div>
 """, unsafe_allow_html=True)
 
@@ -199,18 +247,27 @@ with tab_ask:
                 'The agent retrieves, re-ranks, enforces citations, and (if evidence is strong) '
                 'writes a cited answer — otherwise it declines.</div>', unsafe_allow_html=True)
 
-    gen = st.toggle("Generate a written answer with the local LLM (slower on CPU)", value=False)
+    # Decide how answers are generated, based on what's available in THIS host.
+    local_model_file = project_paths.CACHE_ROOT / "llm_models" / "Qwen2.5-3B-Instruct-Q4_K_M.gguf"
+    if GEMINI_KEY:
+        llm_mode = "gemini"
+        st.success("🌐 Connected to the Gemini free-tier API — full cited answers, "
+                   "a few seconds each.")
+    elif local_model_file.exists():
+        gen = st.toggle("Generate a written answer with the local LLM (slower on CPU)", value=False)
+        llm_mode = "local" if gen else "none"
+    else:
+        llm_mode = "none"
+        st.info("No LLM configured here — showing the retrieved, re-ranked citations "
+                "(add a GEMINI_API_KEY to enable written answers).")
+
     q = st.text_input("Your question",
                       "What must a digital lending app disclose to borrowers via the Key Fact Statement?")
 
     if st.button("Ask Grounded", type="primary"):
-        model_file = project_paths.CACHE_ROOT / "llm_models" / "Qwen2.5-3B-Instruct-Q4_K_M.gguf"
-        use_llm = gen and model_file.exists()
-        if gen and not model_file.exists():
-            st.warning("Local LLM model not found — showing retrieved citations only.")
         with st.spinner("Thinking…"):
-            retriever, cfg, agent = load_pipeline(with_llm=use_llm)
-            if use_llm and agent is not None:
+            retriever, cfg, agent = load_pipeline(llm_mode=llm_mode)
+            if llm_mode in ("gemini", "local") and agent is not None:
                 from agent import ask_agent
                 r = ask_agent(agent, q)
                 if r["decision"] == "answer":
@@ -242,4 +299,6 @@ with tab_ask:
                         f'<div style="margin-top:6px;color:#263238;">{h["text"][:320].strip()}…</div></div>',
                         unsafe_allow_html=True)
 
-st.caption("Grounded · fully offline · ChromaDB + sentence-transformers + llama.cpp · zero API cost")
+_backend = "Gemini free-tier API" if GEMINI_KEY else "local llama.cpp (offline)"
+st.caption(f"Grounded · hybrid retrieval + cross-encoder re-rank + citation enforcement + "
+           f"LangGraph agent · sentence-transformers · LLM: {_backend}")

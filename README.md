@@ -57,6 +57,9 @@ config/              portable path/cache config
 
 ## 🚀 Run it locally
 
+> Dependencies: the root `requirements.txt` is the lean, cloud-deployable set;
+> the full pinned local/dev environment is in `requirements-lock.txt`.
+
 ```bash
 conda activate D:\grounded-rag-env
 
@@ -64,6 +67,7 @@ conda activate D:\grounded-rag-env
 jupyter lab   # open notebooks/Grounded_RAG_Compliance_Assistant.ipynb
 
 # 2) Launch the interactive dashboard
+#    (uses the local Qwen LLM by default; set GEMINI_API_KEY to use Gemini instead)
 streamlit run dashboard/streamlit_app.py
 
 # 3) Open the standalone dashboard (no server needed)
@@ -79,12 +83,18 @@ Python 3.11 · PyMuPDF · sentence-transformers (bge-small) · ChromaDB · rank-
 cross-encoder re-ranker · LangGraph · llama.cpp (Qwen2.5-3B) · NLI faithfulness ·
 Streamlit · GitHub Actions · **all free / offline**.
 
+## 🌍 Live demo (free)
+
+Deployable as a free public app on **Streamlit Community Cloud**, using the **Gemini
+free-tier API** for generation (a swappable provider — the local Qwen LLM still runs
+offline on a full machine). Step-by-step instructions in **[`DEPLOY.md`](DEPLOY.md)**.
+
 ## 🗺️ Roadmap
 
 - Expand the golden set (50–200 Qs), add exact-page recall
 - Adversarial & cross-document questions
-- Optional hosted-LLM provider for a low-RAM cloud deploy
-- Streamlit Community Cloud public link
+- ~~Optional hosted-LLM provider for a low-RAM cloud deploy~~ ✅ done (Gemini)
+- Publish the Streamlit Community Cloud public link
 
 ---
 

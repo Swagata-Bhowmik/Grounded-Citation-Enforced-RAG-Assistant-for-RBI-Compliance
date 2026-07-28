@@ -1,3 +1,8 @@
+> ⚠️ **Superseded (2026).** Hugging Face now requires a paid PRO plan to run any
+> compute-based Space (Gradio/Docker/Streamlit); only static Spaces stay free. The
+> free public live demo has moved to **Streamlit Community Cloud + Gemini free tier** —
+> see **[`DEPLOY.md`](../DEPLOY.md)** in the repo root. This folder is kept for reference.
+
 # 🚀 Deploy Grounded as a free public Hugging Face Space
 
 This folder holds a **ready-to-upload bundle** (`space/`) that runs the full Grounded

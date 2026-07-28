@@ -11,6 +11,12 @@ Groq without touching the rest of the pipeline — only this file changes.
 Default model: Qwen2.5-3B-Instruct (Q4_K_M) — a small, capable instruction model
 that runs on CPU. Answers are short (a cited compliance answer), so CPU latency
 of tens of seconds is acceptable; generation is a "run-it-yourself" long job.
+
+Two providers are wired:
+  * "local"  — llama.cpp + Qwen GGUF, fully offline, zero cost (the default).
+  * "gemini" — Google Gemini via the free API tier, used for the public cloud
+               demo where a multi-GB local model won't fit the free hosting RAM.
+Both expose the SAME `chat(system, user)` interface, so nothing else changes.
 """
 
 from __future__ import annotations
@@ -55,11 +61,85 @@ class LocalLLM:
         return out["choices"][0]["message"]["content"].strip()
 
 
-def get_llm(provider: str = "local", **kwargs):
-    """Factory. Only 'local' is wired now; the seam for other providers exists."""
+class GeminiLLM:
+    """
+    Google Gemini provider (free API tier). Used for the public cloud demo.
+
+    Reads the API key from the arg or the GEMINI_API_KEY / GOOGLE_API_KEY env var
+    (Streamlit Community Cloud injects secrets as env vars). The key is NEVER
+    hard-coded or committed. Model is overridable via the GEMINI_MODEL env var.
+    """
+
+    # A stable alias that always points to a current Gemini Flash model, so this
+    # never breaks when a specific dated version is retired. Overridable via env.
+    DEFAULT_MODEL = os.environ.get("GEMINI_MODEL", "gemini-flash-latest")
+
+    def __init__(self, api_key: str | None = None, model: str | None = None):
+        from google import genai  # imported lazily so the module stays light
+
+        api_key = api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        if not api_key:
+            raise RuntimeError(
+                "No Gemini API key found. Set GEMINI_API_KEY (env or Streamlit secret)."
+            )
+        self.client = genai.Client(api_key=api_key)
+        self.model = model or self.DEFAULT_MODEL
+
+    def chat(self, system: str, user: str,
+             max_tokens: int = 2048, temperature: float = 0.1) -> str:
+        """
+        Low temperature (0.1) keeps answers factual — a compliance assistant must
+        not be 'creative'.
+
+        A generous max_output_tokens is used because current Gemini Flash models
+        may spend some of the budget on internal "thinking" tokens before the
+        visible answer; too small a cap can yield an empty response. We try to
+        minimise that thinking with a config hint, but fall back gracefully for
+        model generations that don't accept the hint (they use a different knob).
+        """
+        from google.genai import types
+
+        base = dict(
+            system_instruction=system,
+            temperature=temperature,
+            max_output_tokens=max_tokens,
+        )
+
+        def _call(cfg_kwargs):
+            return self.client.models.generate_content(
+                model=self.model, contents=user,
+                config=types.GenerateContentConfig(**cfg_kwargs),
+            )
+
+        # Best effort: hint low thinking; if the model rejects that argument
+        # (newer generations use a different knob), retry without it.
+        try:
+            hinted = dict(base, thinking_config=types.ThinkingConfig(thinking_budget=0))
+            resp = _call(hinted)
+        except Exception:
+            resp = _call(base)
+
+        return (resp.text or "").strip()
+
+
+def get_llm(provider: str | None = None, **kwargs):
+    """
+    Factory. Chooses the provider explicitly, or via the GROUNDED_LLM_PROVIDER env
+    var, or auto-detects: if a Gemini API key is present use 'gemini', else 'local'.
+    """
+    if provider is None:
+        provider = os.environ.get("GROUNDED_LLM_PROVIDER")
+    if provider is None:
+        provider = ("gemini"
+                    if (os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"))
+                    else "local")
+
     if provider == "local":
         return LocalLLM(**kwargs)
-    raise ValueError(f"Unknown provider '{provider}'. Only 'local' is configured.")
+    if provider == "gemini":
+        gk = {k: v for k, v in kwargs.items() if k in ("api_key", "model")}
+        return GeminiLLM(**gk)
+    raise ValueError(f"Unknown provider '{provider}'. Use 'local' or 'gemini'.")
 
 
 if __name__ == "__main__":

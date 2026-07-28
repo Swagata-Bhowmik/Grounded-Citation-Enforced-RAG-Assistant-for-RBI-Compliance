@@ -44,6 +44,10 @@ CORPUS_DIR = REPO_ROOT / "regulatory_corpus"
 EVALUATION_DIR = REPO_ROOT / "evaluation"
 PROMPTS_DIR = REPO_ROOT / "prompts"
 
+# Precomputed corpus embeddings committed WITH the repo (small, ~1.9 MB) so the
+# cloud demo can build the retriever instantly without recomputing on cold start.
+REPO_EMBEDDINGS = REPO_ROOT / "corpus_embeddings.npy"
+
 
 def apply_env() -> dict:
     """
