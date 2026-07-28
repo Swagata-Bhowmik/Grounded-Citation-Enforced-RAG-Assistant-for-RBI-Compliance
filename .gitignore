@@ -28,3 +28,8 @@ models_cache/
 # --- OS noise ---
 Thumbs.db
 .DS_Store
+
+# --- HF Space bundle: duplicated data & caches (upload from local folder) ---
+deploy_hf_space/space/regulatory_corpus/
+deploy_hf_space/space/corpus_embeddings.npy
+deploy_hf_space/space/.cache/

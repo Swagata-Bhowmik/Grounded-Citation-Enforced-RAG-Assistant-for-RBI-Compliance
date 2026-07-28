@@ -1,0 +1,15 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+--extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+streamlit
+numpy
+pandas
+torch
+sentence-transformers
+transformers
+pymupdf
+langchain-text-splitters
+rank-bm25
+langgraph
+llama-cpp-python
+huggingface_hub
+pyyaml
