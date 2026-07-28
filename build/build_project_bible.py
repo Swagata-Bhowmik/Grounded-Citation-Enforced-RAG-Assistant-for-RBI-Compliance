@@ -1273,6 +1273,56 @@ QA("If retrieval recall is perfect, why do you even need the re-ranker?",
 QA("What happens if the embedding model and corpus drift over time?",
    "If I change the embedding model I must re-embed the whole corpus so queries and chunks share one space. If "
    "regulations change, I re-index the new PDFs. The CI gate and golden set catch quality regressions from either.")
+
+H2("O · Domain knowledge (RBI, banking & the corpus)")
+P("These check that you understand the DATA and DOMAIN, not just the ML. You don't need to be a compliance "
+  "expert — just show you know what your own documents contain and why the domain fits the system.")
+QA("What is the RBI, and what are 'Master Directions'?",
+   "The RBI — Reserve Bank of India — is India's central bank and the main regulator for banks and NBFCs. "
+   "'Master Directions' are its consolidated, authoritative rulebooks on a topic (e.g. KYC, digital lending): "
+   "living documents the RBI updates over time. They're exactly the kind of dense, authoritative text a "
+   "compliance team must answer questions against.")
+QA("What is an NBFC, and why does it appear in your corpus?",
+   "An NBFC is a Non-Banking Financial Company — it lends and provides financial services but isn't a full bank "
+   "(e.g. can't take demand deposits). RBI regulates them too. My corpus includes the NBFC Scale-Based Regulation "
+   "because a lot of lending and customer-protection rules apply specifically to NBFCs.")
+QA("What are the 10 documents in your corpus?",
+   "They're themed around lending, credit and customer protection: KYC Master Direction, Digital Lending "
+   "Directions, NBFC Scale-Based Regulation, Credit/Debit Card Directions, Microfinance Framework, Interest Rate "
+   "on Advances, Priority Sector Lending, Fraud Risk Management, Customer Service Master Circular, and Outsourcing "
+   "of Financial Services. Together: 720 pages of real, cross-referencing regulation.")
+QA("What is KYC, and what's a question your system answers about it?",
+   "KYC = 'Know Your Customer' — the rules banks follow to verify who a customer is, to prevent fraud and money "
+   "laundering. A real question my system handles is the beneficial-owner threshold for a trust — it retrieves the "
+   "exact KYC Master Direction page and cites it.")
+QA("What is the KFS (Key Fact Statement) — your headline demo question?",
+   "The Key Fact Statement is a standardised summary a lender must give a borrower up front — showing the true "
+   "cost of the loan (interest, fees, penal charges) in a clear format, so borrowers can compare and aren't misled. "
+   "My demo asks what a digital lending app must disclose via the KFS, and the system answers citing the Digital "
+   "Lending Directions, page 8.",
+   tips="This is your best live example — know it cold, since it's the one you demo.")
+QA("What is Priority Sector Lending (PSL)?",
+   "PSL is an RBI rule that banks must lend a minimum share of their credit to priority sectors like agriculture, "
+   "small businesses, and weaker sections — often expressed as a percentage of ANBC (Adjusted Net Bank Credit). "
+   "It's one of my corpus topics and one of the golden-set questions.")
+QA("Why is banking compliance a good fit for a citation-and-refusal RAG system?",
+   "Because in compliance, being traceable and being right matter more than being fluent. Every answer may end up "
+   "in an audit file, so citations are essential; and a confidently wrong answer creates regulatory and "
+   "reputational risk, so refusing when unsure is a feature, not a weakness. The domain rewards exactly the "
+   "behaviours I built.")
+QA("Regulations get superseded or amended — how does your system handle that?",
+   "Right now it answers from the documents as downloaded on a fixed date, and it cites them, so a user can see "
+   "the source and its recency. Handling supersession properly — flagging that a rule was replaced — is a roadmap "
+   "item; the corpus would need version metadata and the agent a step to prefer the latest. I'm honest that this "
+   "is a known limitation.")
+QA("Could this be used to give customers or officers actual compliance decisions?",
+   "As a decision-support tool that surfaces the right regulation with a citation, yes — but not as the final "
+   "word. It's not legal advice, the corpus is a focused slice, and a human expert must confirm. I'm careful to "
+   "frame it as a portfolio demonstration of the pattern, not a certified compliance product.")
+QA("Why did you pick lending/credit as the theme rather than covering all of RBI?",
+   "Focus beats breadth for a defensible project. A coherent, cross-referencing slice (lending, credit, customer "
+   "protection) means questions genuinely span multiple related documents — which tests retrieval and citation "
+   "well — without pretending to cover all of RBI, which would dilute quality and honesty.")
 PAGEBREAK()
 
 # ======================================================================

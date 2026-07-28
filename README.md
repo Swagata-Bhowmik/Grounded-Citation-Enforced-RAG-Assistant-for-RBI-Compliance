@@ -21,7 +21,7 @@
 | 🌍 | **[Live interactive demo](https://grounded-citation-enforced-rag-assistant-swagata-bhowmik.streamlit.app/)** | Ask a real compliance question, get a cited answer or an honest refusal (free host — first load may take ~30s to wake). |
 | 📓 | **[Guided Jupyter notebook](https://nbviewer.org/github/Swagata-Bhowmik/Grounded-Citation-Enforced-RAG-Assistant-for-RBI-Compliance/blob/main/notebooks/Grounded_RAG_Compliance_Assistant.ipynb)** | The full build story, cell by cell — theory, real before/after examples, every output interpreted. ([view on GitHub](https://github.com/Swagata-Bhowmik/Grounded-Citation-Enforced-RAG-Assistant-for-RBI-Compliance/blob/main/notebooks/Grounded_RAG_Compliance_Assistant.ipynb)) |
 | 📊 | **[HTML walkthrough dashboard](https://swagata-bhowmik.github.io/Grounded-Citation-Enforced-RAG-Assistant-for-RBI-Compliance/)** | A no-server, browser-only tour of the problem, method, and results. |
-| 📘 | **[Complete project guide (Word)](docs/Grounded_Project_Bible.docx?raw=1)** | Every concept explained from zero, the full build story, the code, deployment, and a 130-question Q&A bank. |
+| 📘 | **[Complete project guide (Word)](docs/Grounded_Project_Bible.docx?raw=1)** | Every concept explained from zero, the full build story, the code, deployment, and a 140+ question Q&A bank. |
 
 ---
 
